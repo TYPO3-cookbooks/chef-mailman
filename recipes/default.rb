@@ -18,39 +18,7 @@
 #
 
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
-
-###### Exim configuration
-
-#TODO presset exim4 configuration
-package "exim4"
-service "exim4"
-
-template "/etc/exim4/conf.d/main/04_exim_config_mailman" do
-  notifies :restart, resources(:service => "exim4")
-end
-template "/etc/exim4/conf.d/transport/40_exim_config_mailman"do
-  notifies :restart, resources(:service => "exim4")
-end
-template "/etc/exim4/conf.d/router/101_exim_config_mailman"do
-  notifies :restart, resources(:service => "exim4")
-end
-
-######## Apache2 configuration
-
 include_recipe "apache2"
-template "/etc/apache2/sites-enabled/mailman.conf" do
-  owner "root"
-  group "root"
-  mode "644"
-end
-
-apache_site "mailman.conf"
-
-#apache_site "default" do
-# enable false
-#end
-
-######## Mailman configuration
 
 #TODO: set preseed for language options
 package "mailman"
@@ -67,7 +35,6 @@ execute "newaliases" do
   subscribes :run, resources(:template => "/etc/aliases")
 end
 
-
 node.set_unless["mailman"]["mailman_password"] = secure_password
 
 mailman_list "mailman" do
@@ -75,8 +42,8 @@ mailman_list "mailman" do
   password node["mailman"]["mailman_password"]
   action :create
   notifies :start, resources(:service => "mailman")
+  provider "mailman_#{node['mailman']['mta']}"
 end
-
 
 template "/etc/mailman/mm_cfg.py" do
   notifies :restart, resources(:service => "mailman")

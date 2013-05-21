@@ -5,12 +5,12 @@
 # On a Red Hat/Fedora system using the RPM use "/var/mailman"
 # On Debian using the deb package use "/var/lib/mailman"
 # This is normally the same as ~mailman
-MM_HOME=/var/lib/mailman
+MM_HOME=<%=node["mailman"]["home"] %>
 #
 # User and group for Mailman, should match your --with-mail-gid
 # switch to Mailman's configure script.  Value is normally "mailman"
-MM_UID=list
-MM_GID=list
+MM_UID=<%=node["mailman"]["user"] %>
+MM_GID=<%=node["mailman"]["group"] %>
 #
 # Domains that your lists are in - colon separated list
 # you may wish to add these into local_domains as well

@@ -1,0 +1,15 @@
+<VirtualHost *:80>
+        ServerAdmin <%= node[:mailman][:email] %>
+        ServerName <%= node[:mailman][:hostname] %>
+        DocumentRoot /var/www/
+
+        RedirectMatch ^/$ http://<%= node[:mailman][:hostname] %>/cgi-bin/mailman/listinfo
+
+        Alias /pipermail /var/lib/mailman/archives/public
+        <Directory /var/lib/mailman/archives/public>
+                Options FollowSymLinks
+        </Directory>
+
+        ErrorLog /var/log/apache2/<%= node[:mailman][:hostname] %>-error.log
+        CustomLog /var/log/apache2/<%= node[:mailman][:hostname] %>-access.log common
+</VirtualHost>

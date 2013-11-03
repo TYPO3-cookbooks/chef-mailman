@@ -18,7 +18,6 @@
 #
 
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
-include_recipe "apache2"
 
 #TODO: set preseed for language options
 package "mailman"
@@ -35,27 +34,31 @@ execute "newaliases" do
   subscribes :run, resources(:template => "/etc/aliases")
 end
 
-node.set_unless["mailman"]["mailman_password"] = secure_password
-
-mailman_list "mailman" do
-  email node["mailman"]["mailman_email"]
-  password node["mailman"]["mailman_password"]
-  action :create
-  notifies :start, resources(:service => "mailman")
-  provider "mailman_#{node['mailman']['mta']}"
-end
+node.set_unless[:mailman][:mailman_password] = secure_password
 
 template "/etc/mailman/mm_cfg.py" do
+  source "mailman/mm_cfg.py.erb"
+  variables(
+    :config => node[:mailman][:config]
+  )
   notifies :restart, resources(:service => "mailman")
 end
 
-if not node['mailman']['site_pass'].nil?
+if not node[:mailman][:site_pass].nil?
   execute "site_pass" do
-    command "mmsitepass #{node['mailman']['site_pass']}"
+    command "mmsitepass #{node[:mailman][:site_pass]}"
   end
 end
-if not node['mailman']['list_creator'].nil?
+if not node[:mailman][:list_creator].nil?
   execute "list_creator" do
-    command "mmsitepass -c #{node['mailman']['list_creator']}"
+    command "mmsitepass -c #{node[:mailman][:list_creator]}"
   end
 end
+
+include_recipe "mailman::apache"
+
+if node[:mailman][:mta] == "postfix"
+  include_recipe "postfix"
+end
+
+include_recipe "mailman::lists"

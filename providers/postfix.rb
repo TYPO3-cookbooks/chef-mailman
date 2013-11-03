@@ -30,9 +30,8 @@ action :create do
     @new_resource.updated_by_last_action(true)
   end
   template "/etc/mailman/aliases/#{@new_resource.name}" do
-    source "mailman_aliases.erb"
+    source "mailman/mailman_aliases.erb"
     variables ({:name => new_resource.name})
-    cookbook "mailman"
   end
   execute "postalias" do
     action :nothing

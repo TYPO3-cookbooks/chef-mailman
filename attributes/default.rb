@@ -10,6 +10,11 @@ default[:mailman][:home] = "/var/lib/mailman"
 default[:mailman][:user] = "list"
 default[:mailman][:group] = "list"
 
+default[:mailman][:postfix][:server_name] = "mail"
+default[:mailman][:postfix][:domain_name] = "localdomain"
+default[:mailman][:postfix][:destinations] = ["list", "localhost"]
+
+
 # these are the Debian Wheezy defaults
 default[:mailman][:config] = {
   "MAILMAN_SITE_LIST"       => "mailman",

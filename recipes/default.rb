@@ -58,7 +58,7 @@ end
 include_recipe "mailman::apache"
 
 if node[:mailman][:mta] == "postfix"
-  include_recipe "postfix"
+  include_recipe "mailman::postfix"
 end
 
 include_recipe "mailman::lists"

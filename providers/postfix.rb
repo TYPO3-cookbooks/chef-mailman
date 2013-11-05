@@ -29,22 +29,22 @@ action :create do
     end
     @new_resource.updated_by_last_action(true)
   end
-  template "/etc/mailman/aliases/#{@new_resource.name}" do
-    source "mailman/mailman_aliases.erb"
-    variables ({:name => new_resource.name})
-  end
-  execute "postalias" do
-    action :nothing
-    subscribes :run, resources(:template => "/etc/mailman/aliases/#{new_resource.name}")
-    command "postalias hash:/etc/mailman/aliases/#{new_resource.name}"
-  end
-  execute "postconf" do 
-    action :nothing
-    subscribes :run, resources(:template => "/etc/mailman/aliases/#{new_resource.name}")
-    command <<EOF
-postconf -e alias_maps="hash:/etc/aliases $(for f in /etc/mailman/aliases/*.db ; do printf "hash:${f%.db} "; done)"
-EOF
-  end
+  #template "/etc/mailman/aliases/#{@new_resource.name}" do
+  #  source "mailman/mailman_aliases.erb"
+  #  variables ({:name => new_resource.name})
+  #end
+  #execute "postalias" do
+  #  action :nothing
+  #  subscribes :run, resources(:template => "/etc/mailman/aliases/#{new_resource.name}")
+  #  command "postalias hash:/etc/mailman/aliases/#{new_resource.name}"
+  #end
+  #execute "postconf" do
+  #  action :nothing
+  #  subscribes :run, resources(:template => "/etc/mailman/aliases/#{new_resource.name}")
+  #  command <<EOF
+#postconf -e alias_maps="hash:/etc/aliases $(for f in /etc/mailman/aliases/*.db ; do printf "hash:${f%.db} "; done)"
+#EOF
+#  end
 end
 
 action :delete do
